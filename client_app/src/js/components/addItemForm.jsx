@@ -2,14 +2,11 @@ import React, { Component } from "react";
 import { Form, Button, Input } from "antd";
 
 export default class AddItemForm extends Component {
-  onFinish = (model) => {
-    console.log(model);
-  };
-
   render() {
+    const { onValidSubmit, isLoading } = this.props;
     return (
       <div className="resource-form">
-        <Form onFinish={this.onFinish}>
+        <Form onFinish={onValidSubmit}>
           <Form.Item
             name="key"
             rules={[
@@ -19,13 +16,13 @@ export default class AddItemForm extends Component {
               },
             ]}
           >
-            <Input placeholder="Resource Key" id="resourceKey" />
+            <Input placeholder="Resource Key" id="resourceKey" disabled={isLoading}/>
           </Form.Item>
           <Form.Item name="value">
-            <Input placeholder="Resource Value"/>
+            <Input placeholder="Resource Value" disabled={isLoading}/>
           </Form.Item>
           <Form.Item>
-            <Button htmlType="submit" type="primary">
+            <Button htmlType="submit" type="primary" loading={isLoading}>
               Add item
             </Button>
           </Form.Item>
