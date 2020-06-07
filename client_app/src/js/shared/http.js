@@ -5,7 +5,7 @@ class ApiRequestExecutor {
         this.method = method;
     }
 
-    send = ( body= {} ) => {
+    send = (body) => {
         const options = {
             method: this.method,
             headers: {
@@ -13,7 +13,7 @@ class ApiRequestExecutor {
             }
         };
 
-        if (this.method !== 'GET') {
+        if (body) {
             options.body = JSON.stringify(body)
         }
 

@@ -3,3 +3,7 @@
   margin: auto;
   margin-top: 80px;
 }
+
+.resource-form__space {
+  width: 100%;
+}

@@ -20,21 +20,6 @@ namespace BrokereeSolutionsTestTask.Controllers
             _logger = logger;
         }
 
-        [HttpGet("/{key}")]
-        public ActionResult<Resource> Get(string key)
-        {
-            if(_localResourceStorage.TryGetValue(key, out var value))
-            {
-                return Ok(new Resource
-                {
-                    Key = key,
-                    Value = value
-                });
-            }
-
-            return BadRequest();
-        }
-
         [HttpGet]
         public ActionResult<IEnumerable<Resource>> GetAll()
         {
@@ -59,14 +44,20 @@ namespace BrokereeSolutionsTestTask.Controllers
             return BadRequest(errorMessage);
         }
 
-        //[HttpDelete]
-        //public IActionResult Delete(string key)
-        //{
+        [HttpDelete("{key}")]
+        public IActionResult Delete(string key)
+        {
+            if (_localResourceStorage.TryRemove(key, out _))
+            {
+                return Ok();
+            }
+            var errorMessage = $"Cannot delete resource with {key} key";
 
-        //}
+            return BadRequest(errorMessage);
+        }
 
         [HttpPut]
-        public ActionResult<Resource> Update(Resource resource)
+        public ActionResult<Resource> Update([FromBody] Resource resource)
         {
             if (_localResourceStorage.ContainsKey(resource.Key))
             {

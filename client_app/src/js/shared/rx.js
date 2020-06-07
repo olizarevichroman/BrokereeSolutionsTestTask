@@ -23,9 +23,13 @@ async function createResource ( { resource, onSuccess, onError }) {
         }
 
         const response = await http.POST(API_URLS.RESOURCES_URL).send(resource);
-        const data = await response.json();
-        if (onSuccess instanceof Function) {
+        if (response.ok && onSuccess instanceof Function) {
+            const data = await response.json();
             onSuccess(data);
+        }
+        if (!response.ok && onError instanceof Function) {
+            const errorMessage = await response.text();
+            onError(errorMessage);
         }
     }
     catch (error) {
@@ -71,21 +75,25 @@ async function updateResource ({ resource, onSuccess, onError }) {
     }
 }
 
-function deleteResource ({ key, onSuccess, onError }) {
-    const url = `${API_URLS.RESOURCES_URL}`;
+async function deleteResource ({ key, onSuccess, onError }) {
+    const url = `${API_URLS.RESOURCES_URL}/${key}`;
 
-    http.DELETE(url)
-        .send({ key })
-        .then((response) => {
-            if (onSuccess instanceof Function) {
-                onSuccess(response)
-            }
-        })
-        .catch((error) => {
-            if (onError instanceof Function) {
-                onError(error);
-            }
-        });
+    try {
+        if (!key) {
+            throw new Error("Key cannot be null");
+        }
+
+        const response = await http.DELETE(url).send();
+        const data = await response.json();
+        if (onSuccess instanceof Function) {
+            onSuccess(data);
+        }
+    }
+    catch (error) {
+        if (onError instanceof Function) {
+            onError(error);
+        }
+    }
 }
 
 export default {
