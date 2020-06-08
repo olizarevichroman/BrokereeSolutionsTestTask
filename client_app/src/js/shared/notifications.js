@@ -10,7 +10,7 @@ export function showErrorNotification({ title = 'Error', description }) {
     Notification.error({
         message: title,
         description: description,
-        duration: 10,
+        duration: 6,
         style: DEFALT_STYLES
     });
 }
@@ -19,7 +19,7 @@ export function showSuccessNotification({ title = 'Done', description }) {
     Notification.success({
         message: title,
         description: description,
-        duration: 10,
+        duration: 6,
         style: DEFALT_STYLES
     });
 }

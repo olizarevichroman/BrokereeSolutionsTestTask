@@ -17,6 +17,14 @@
     text-transform: uppercase;
 }
 
+.resource-table__row {
+    vertical-align: top;
+}
+
+.editable-cell__input.ant-form-item{
+    margin: 0px;
+}
+
 @media (max-width: 1000px) {
     .resource-table__actions-container {
         flex-direction: column;

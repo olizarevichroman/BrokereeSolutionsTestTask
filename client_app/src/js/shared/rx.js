@@ -34,7 +34,7 @@ async function createResource({ resource, onSuccess, onError }) {
             const data = await response.json();
             onSuccess(data);
             showSuccessNotification({
-                description: `Resource ${resource.key} has been successfully created`,
+                description: `Resource "${resource.key}" has been successfully created`,
                 title: 'Created'
             });
         }
@@ -79,7 +79,7 @@ async function deleteResource({ key, onSuccess, onError }) {
         if (response.ok && onSuccess instanceof Function) {
             onSuccess(key);
             showSuccessNotification({
-                description: `Resource ${key} has been successfully deleted`,
+                description: `Resource "${key}" has been successfully deleted`,
                 title: 'Deleted'
             });
         }

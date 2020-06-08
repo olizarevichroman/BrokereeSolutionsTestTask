@@ -13,7 +13,7 @@ export default class AddItemForm extends Component {
     onFieldsChanged = (changedFields, allFields) => {
         const isSubmitDisabled = allFields.some(f => !f.touched || f.errors.length > 0);
 
-        if (this.state.isSubmitDisabled != isSubmitDisabled) {
+        if (this.state.isSubmitDisabled !== isSubmitDisabled) {
             this.setState({
                 isSubmitDisabled
             });

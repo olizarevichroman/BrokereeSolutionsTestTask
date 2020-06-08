@@ -20,15 +20,13 @@ export default class App extends React.Component {
 
     deleteResource = (key) => {
         this.setState((prevState) => {
-            const index = prevState.resources.findIndex((r) => r.key === key);
-            if (index !== -1) {
-                const newResources = prevState.resources.slice();
-                newResources.splice(index, 1);
+            const newResources = prevState.resources.filter(
+                (r) => r.key !== key
+            );
 
-                return {
-                    resources: newResources
-                };
-            }
+            return {
+                resources: newResources
+            };
         });
     };
 
@@ -59,6 +57,10 @@ export default class App extends React.Component {
         });
     };
 
+    updateResource = (resource) => {
+        console.log('resource', resource);
+    }
+
     createResource = (resource) => {
         this.setState((prevState) => {
             return {
@@ -78,13 +80,13 @@ export default class App extends React.Component {
             isResourceAdding: false,
             formError
         });
-    }
+    };
 
     onErrorClosed = () => {
         this.setState({
             formError: false
         });
-    }
+    };
 
     componentDidMount() {
         rx.getResources({
@@ -94,7 +96,12 @@ export default class App extends React.Component {
     }
 
     render() {
-        const { resources, isResourceAdding, isLoading, formError } = this.state;
+        const {
+            resources,
+            isResourceAdding,
+            isLoading,
+            formError
+        } = this.state;
 
         return (
             <div className="app">
@@ -108,6 +115,7 @@ export default class App extends React.Component {
                     items={resources}
                     loading={isLoading}
                     onResourceDelete={this.onResourceDelete}
+                    onSave={this.updateResource}
                 />
             </div>
         );
