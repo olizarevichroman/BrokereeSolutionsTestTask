@@ -1,5 +1,4 @@
 .resource-form {
-    width: 60%;
     margin: auto;
     margin-top: 80px;
 }
@@ -8,6 +7,22 @@
     width: 100%;
 }
 
+.resource-table {
+    max-width: 100%;
+    word-wrap: break-word;
+    word-break: break-all;
+}
+
 .resource-table__action {
     text-transform: uppercase;
+}
+
+@media (max-width: 1000px) {
+    .resource-table__actions-container {
+        flex-direction: column;
+    }
+
+    .resource-table__action {
+        margin-bottom: 10px;
+    }
 }

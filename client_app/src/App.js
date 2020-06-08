@@ -26,7 +26,6 @@ export default class App extends React.Component {
                 newResources.splice(index, 1);
 
                 return {
-                    ...prevState,
                     resources: newResources
                 };
             }
@@ -46,9 +45,9 @@ export default class App extends React.Component {
             newResources.unshift(resource);
 
             return {
-                ...prevState,
                 resources: newResources,
-                isResourceAdding: false
+                isResourceAdding: false,
+                formError: false
             };
         });
     };
@@ -63,7 +62,6 @@ export default class App extends React.Component {
     createResource = (resource) => {
         this.setState((prevState) => {
             return {
-                ...prevState,
                 isResourceAdding: true
             };
         });
@@ -76,22 +74,15 @@ export default class App extends React.Component {
     };
 
     onError = (formError) => {
-        this.setState((prevState) => {
-            return {
-                ...prevState,
-                isResourceAdding: false,
-                isLoading: false,
-                formError
-            }
+        this.setState({
+            isResourceAdding: false,
+            formError
         });
     }
 
     onErrorClosed = () => {
-        this.setState((prevState) => {
-            return {
-                ...prevState,
-                formError: false
-            }
+        this.setState({
+            formError: false
         });
     }
 
@@ -106,7 +97,7 @@ export default class App extends React.Component {
         const { resources, isResourceAdding, isLoading, formError } = this.state;
 
         return (
-            <div className="App">
+            <div className="app">
                 <AddItemForm
                     onErrorClosed={this.onErrorClosed}
                     errorMessage={formError}

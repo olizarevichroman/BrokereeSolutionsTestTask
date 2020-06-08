@@ -1,20 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Table, Button, Space, Popconfirm } from 'antd';
-import rx from './../shared/rx';
-
-const dataSource = [];
-for (let i = 0; i < 20; i++) {
-    dataSource.push({
-        key: 'my great key',
-        value: 'my great value'
-    });
-}
-
-dataSource.push({
-    key: 'last',
-    value: 'last'
-});
 
 export default class ItemsList extends Component {
     static propsTypes = {
@@ -32,18 +18,20 @@ export default class ItemsList extends Component {
             {
                 title: 'Key',
                 dataIndex: 'key',
-                key: 'key'
+                key: 'key',
+                width: '40%'
             },
             {
                 title: 'Value',
                 dataIndex: 'value',
-                key: 'value'
+                key: 'value',
+                width: '40%'
             },
             {
                 title: 'Actions',
                 render: (item) => {
                     return (
-                        <Space>
+                        <Space className="resource-table__actions-container">
                             <Button className="resource-table__action">
                                 save
                             </Button>
@@ -63,7 +51,8 @@ export default class ItemsList extends Component {
                         </Space>
                     );
                 },
-                key: 'action'
+                key: 'action',
+                width: '20%'
             }
         ];
     }
