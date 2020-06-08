@@ -2,8 +2,33 @@ import React, { Component } from 'react';
 import { Form, Button, Input, Alert, Space } from 'antd';
 
 export default class AddItemForm extends Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            isSubmitDisabled: true
+        };
+    }
+
+    onFieldsChanged = (changedFields, allFields) => {
+        const isSubmitDisabled = allFields.some(f => !f.touched || f.errors.length > 0);
+
+        if (this.state.isSubmitDisabled != isSubmitDisabled) {
+            this.setState({
+                isSubmitDisabled
+            });
+        };
+    };
+
     render() {
-        const { onValidSubmit, isLoading, errorMessage } = this.props;
+        const {
+            onValidSubmit,
+            isLoading,
+            errorMessage,
+            onErrorClosed
+        } = this.props;
+        const { isSubmitDisabled } = this.state;
+
         return (
             <div className="resource-form">
                 <Space
@@ -16,11 +41,15 @@ export default class AddItemForm extends Component {
                             message="Error"
                             description={errorMessage}
                             type="error"
+                            onClose={onErrorClosed}
                             showIcon
                             closable
                         />
                     )}
-                    <Form onFinish={onValidSubmit}>
+                    <Form
+                        onFinish={onValidSubmit}
+                        onFieldsChange={this.onFieldsChanged}
+                    >
                         <Form.Item
                             name="key"
                             rules={[
@@ -29,6 +58,7 @@ export default class AddItemForm extends Component {
                                     message: 'Please input resource key'
                                 }
                             ]}
+                            hasFeedback
                         >
                             <Input
                                 placeholder="Resource Key"
@@ -44,6 +74,7 @@ export default class AddItemForm extends Component {
                                     message: 'Please input resource value'
                                 }
                             ]}
+                            hasFeedback
                         >
                             <Input
                                 placeholder="Resource Value"
@@ -55,8 +86,9 @@ export default class AddItemForm extends Component {
                                 htmlType="submit"
                                 type="primary"
                                 loading={isLoading}
+                                disabled={isSubmitDisabled}
                             >
-                                Add item
+                                Create
                             </Button>
                         </Form.Item>
                     </Form>

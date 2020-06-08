@@ -1,9 +1,13 @@
 .resource-form {
-  width: 60%;
-  margin: auto;
-  margin-top: 80px;
+    width: 60%;
+    margin: auto;
+    margin-top: 80px;
 }
 
 .resource-form__space {
-  width: 100%;
+    width: 100%;
+}
+
+.resource-table__action {
+    text-transform: uppercase;
 }

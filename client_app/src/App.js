@@ -71,23 +71,34 @@ export default class App extends React.Component {
         rx.createResource({
             resource,
             onSuccess: this.onResourceCreated,
-            onError: this.onFormError
+            onError: this.onError
         });
     };
 
-    onFormError = (formError) => {
+    onError = (formError) => {
         this.setState((prevState) => {
             return {
                 ...prevState,
                 isResourceAdding: false,
+                isLoading: false,
                 formError
+            }
+        });
+    }
+
+    onErrorClosed = () => {
+        this.setState((prevState) => {
+            return {
+                ...prevState,
+                formError: false
             }
         });
     }
 
     componentDidMount() {
         rx.getResources({
-            onSuccess: this.onResourcesFetched
+            onSuccess: this.onResourcesFetched,
+            onError: this.onError
         });
     }
 
@@ -97,6 +108,7 @@ export default class App extends React.Component {
         return (
             <div className="App">
                 <AddItemForm
+                    onErrorClosed={this.onErrorClosed}
                     errorMessage={formError}
                     onValidSubmit={this.createResource}
                     isLoading={isResourceAdding}
