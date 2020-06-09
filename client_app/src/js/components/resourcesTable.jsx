@@ -5,11 +5,20 @@ import EditableCell from './editableCell';
 
 export default class ResourcesTable extends Component {
     static propsTypes = {
-        onResourceDelete: PropTypes.func.isRequired
+        onResourceDelete: PropTypes.func.isRequired,
+        onResourceUpdate: PropTypes.func.isRequired,
+        onResourceEdit: PropTypes.func.isRequired,
+        items: PropTypes.array,
+        loading: PropTypes.bool,
+        editingItem: PropTypes.shape({
+            key: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+            updatinr: PropTypes.bool
+        })
     };
 
     static defaulProps = {
-        loading: false
+        loading: false,
+        items: []
     };
 
     constructor(props) {
@@ -50,7 +59,9 @@ export default class ResourcesTable extends Component {
                                     <Button
                                         htmlType="button"
                                         className="resource-table__action"
-                                        onClick={() => this.updateResource(item.key)}
+                                        onClick={() =>
+                                            this.updateResource(item.key)
+                                        }
                                         disabled={this.isItemInvalid()}
                                         loading={this.isItemUpdating()}
                                     >
@@ -108,7 +119,7 @@ export default class ResourcesTable extends Component {
         const { formRef } = this.state;
         formRef.current.setFieldsValue({ ...record });
         this.props.onResourceEdit(record.key);
-    }
+    };
 
     updateResource = async (key) => {
         const { onResourceUpdate } = this.props;
@@ -116,8 +127,7 @@ export default class ResourcesTable extends Component {
         try {
             const row = await form.validateFields();
             onResourceUpdate({ key, value: row.value });
-        }
-        catch(error) {
+        } catch (error) {
             console.log('Error', error);
         }
     };
@@ -132,18 +142,18 @@ export default class ResourcesTable extends Component {
 
     isItemInvalid = () => {
         return this.state.editingItemInvalid;
-    }
+    };
 
     onFieldsChange = (changedFields, allFields) => {
-        const isEditingItemInvalid = allFields.some(f => f.errors.length > 0);
+        const isEditingItemInvalid = allFields.some((f) => f.errors.length > 0);
         const currentItemState = this.state.isEditingItemInvalid;
 
-        if (isEditingItemInvalid != currentItemState) {
+        if (isEditingItemInvalid !== currentItemState) {
             this.setState({
                 editingItemInvalid: isEditingItemInvalid
             });
         }
-    }
+    };
 
     render() {
         const { items, loading } = this.props;
@@ -167,7 +177,7 @@ export default class ResourcesTable extends Component {
         });
 
         return (
-            <div className="resource-table" >
+            <div className="resource-table">
                 <Form ref={formRef} onFieldsChange={this.onFieldsChange}>
                     <Table
                         rowClassName="resource-table__row"
@@ -175,8 +185,7 @@ export default class ResourcesTable extends Component {
                         components={components}
                         columns={columns}
                         pagination={{
-                            pageSize: 5,
-                            onChange: () => console.log('page was changed')
+                            pageSize: 5
                         }}
                         dataSource={items}
                     />

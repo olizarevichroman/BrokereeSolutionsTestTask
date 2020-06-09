@@ -106,7 +106,7 @@ export default class App extends React.Component {
     updateResource = (resource) => {
         const newResources = this.state.resources.slice();
         const index = newResources.findIndex(r => r.key === resource.key);
-        if (index != -1) {
+        if (index !== -1) {
             newResources.splice(index, 1, resource);
         }
 

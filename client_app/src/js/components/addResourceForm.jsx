@@ -1,7 +1,14 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Form, Button, Input, Alert, Space } from 'antd';
 
-export default class AddResourceForm extends Component {
+export default class AddResourceForm extends React.Component {
+    static propTypes = {
+        onValidSubmit: PropTypes.func.isRequired,
+        onErrorClosed: PropTypes.func.isRequired,
+        isLoading: PropTypes.bool,
+        errorMessage: PropTypes.node
+    }
     constructor(props) {
         super(props);
 

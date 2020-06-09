@@ -3,7 +3,7 @@ import { notification as Notification } from 'antd';
 const DEFALT_STYLES = {
     maxWidth: '300px',
     right: '-50px',
-    'word-break': 'break-word'
+    wordBreak: 'break-word'
 };
 
 export function showErrorNotification({ title = 'Error', description }) {

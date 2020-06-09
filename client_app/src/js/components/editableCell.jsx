@@ -1,12 +1,17 @@
-import React, { Component } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Form, Input } from 'antd';
 
-export default class EditableCell extends Component {
+export default class EditableCell extends React.Component {
+    static propTypes = {
+        editing: PropTypes.bool,
+        title: PropTypes.string
+
+    }
     constructor(props) {
         super(props);
 
         this.state = {
-            editing: false,
             inputRef: React.createRef()
         };
     }
@@ -15,7 +20,6 @@ export default class EditableCell extends Component {
         const {
             title,
             dataIndex,
-            editable,
             children,
             record,
             editing,
@@ -31,7 +35,7 @@ export default class EditableCell extends Component {
                         rules={[
                             {
                                 required: true,
-                                message: `Please Input ${title}!`
+                                message: `${title} is required`
                             }
                         ]}
                     >

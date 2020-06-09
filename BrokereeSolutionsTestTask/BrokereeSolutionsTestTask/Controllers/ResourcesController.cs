@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using BrokereeSolutionsTestTask.Models;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 
 namespace BrokereeSolutionsTestTask.Controllers
 {
@@ -13,12 +12,6 @@ namespace BrokereeSolutionsTestTask.Controllers
     {
         private static readonly ConcurrentDictionary<string, string> _localResourceStorage = new ConcurrentDictionary<string, string>();
 
-        private readonly ILogger<ResourcesController> _logger;
-
-        public ResourcesController(ILogger<ResourcesController> logger)
-        {
-            _logger = logger;
-        }
 
         [HttpGet]
         public ActionResult<IEnumerable<Resource>> GetAll()
@@ -39,7 +32,7 @@ namespace BrokereeSolutionsTestTask.Controllers
             {
                 return Ok(resource);
             }
-            var errorMessage = $"Resource with {resource.Key} key already exists";
+            var errorMessage = $"Resource with \"{resource.Key}\" key already exists";
 
             return BadRequest(errorMessage);
         }
@@ -51,7 +44,7 @@ namespace BrokereeSolutionsTestTask.Controllers
             {
                 return Ok();
             }
-            var errorMessage = $"Cannot delete resource with {key} key";
+            var errorMessage = $"Cannot delete resource with \"{key}\" key";
 
             return BadRequest(errorMessage);
         }
@@ -62,11 +55,11 @@ namespace BrokereeSolutionsTestTask.Controllers
             string errorMessage = null;
             if (!_localResourceStorage.TryGetValue(resource.Key, out var currentValue))
             {
-                errorMessage = $"Cannot find resource with {resource.Key} key";
+                errorMessage = $"Cannot find resource with \"{resource.Key}\" key";
             }
             if (!_localResourceStorage.TryUpdate(resource.Key, resource.Value, currentValue))
             {
-                errorMessage = $"Cannot update resource with {resource.Key} key";
+                errorMessage = $"Cannot update resource with \"{resource.Key}\" key";
             }
             if (errorMessage != null)
             {
@@ -77,3 +70,4 @@ namespace BrokereeSolutionsTestTask.Controllers
         }
     }
 }
+
