@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Form, Button, Input, Alert, Space } from 'antd';
 
-export default class AddItemForm extends Component {
+export default class AddResourceForm extends Component {
     constructor(props) {
         super(props);
 

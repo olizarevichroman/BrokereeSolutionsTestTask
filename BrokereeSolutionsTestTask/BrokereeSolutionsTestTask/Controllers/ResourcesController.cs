@@ -59,15 +59,21 @@ namespace BrokereeSolutionsTestTask.Controllers
         [HttpPut]
         public ActionResult<Resource> Update([FromBody] Resource resource)
         {
-            if (_localResourceStorage.ContainsKey(resource.Key))
+            string errorMessage = null;
+            if (!_localResourceStorage.TryGetValue(resource.Key, out var currentValue))
             {
-                _localResourceStorage[resource.Key] = resource.Value;
-
-                return Ok(resource);
+                errorMessage = $"Cannot find resource with {resource.Key} key";
             }
-            var errorMessage = $"Resource with {resource.Key} key was not found";
+            if (!_localResourceStorage.TryUpdate(resource.Key, resource.Value, currentValue))
+            {
+                errorMessage = $"Cannot update resource with {resource.Key} key";
+            }
+            if (errorMessage != null)
+            {
+                return BadRequest(errorMessage);
+            }
 
-            return BadRequest(errorMessage);
+            return Ok(resource);
         }
     }
 }

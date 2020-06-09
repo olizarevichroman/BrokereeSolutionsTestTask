@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { Table, Button, Space, Popconfirm, Form } from 'antd';
 import EditableCell from './editableCell';
 
-export default class ItemsList extends Component {
+export default class ResourcesTable extends Component {
     static propsTypes = {
         onResourceDelete: PropTypes.func.isRequired
     };
@@ -16,7 +16,7 @@ export default class ItemsList extends Component {
         super(props);
 
         this.state = {
-            editingKey: false,
+            editingItemInvalid: false,
             formRef: React.createRef()
         };
 
@@ -31,8 +31,7 @@ export default class ItemsList extends Component {
                 title: 'Key',
                 dataIndex: 'key',
                 key: 'key',
-                width: '40%',
-                editable: true
+                width: '40%'
             },
             {
                 title: 'Value',
@@ -49,15 +48,21 @@ export default class ItemsList extends Component {
                             {this.isEditing(item.key) ? (
                                 <React.Fragment>
                                     <Button
-                                        htmlType="submit"
+                                        htmlType="button"
                                         className="resource-table__action"
+                                        onClick={() => this.updateResource(item.key)}
+                                        disabled={this.isItemInvalid()}
+                                        loading={this.isItemUpdating()}
                                     >
                                         save
                                     </Button>
                                     <Button
                                         className="resource-table__action"
                                         htmlType="button"
-                                        onClick={() => this.onEditingKeyChanged(false)}
+                                        disabled={this.isItemUpdating()}
+                                        onClick={() =>
+                                            this.onResourceEdit(false)
+                                        }
                                     >
                                         cancel
                                     </Button>
@@ -67,8 +72,9 @@ export default class ItemsList extends Component {
                                     <Button
                                         htmlType="button"
                                         className="resource-table__action"
+                                        disabled={this.isItemUpdating()}
                                         onClick={() =>
-                                            this.onEditingKeyChanged(item)
+                                            this.onResourceEdit(item)
                                         }
                                     >
                                         edit
@@ -76,11 +82,12 @@ export default class ItemsList extends Component {
                                     <Popconfirm
                                         title="Are you sure delete this resource?"
                                         onConfirm={() =>
-                                            props.onResourceDelete(item.key)
+                                            props.onResourceDelete(item)
                                         }
                                     >
                                         <Button
                                             className="resource-table__action"
+                                            htmlType="button"
                                             danger
                                         >
                                             delete
@@ -97,46 +104,71 @@ export default class ItemsList extends Component {
         ];
     }
 
-    onEditingKeyChanged = (record) => {
+    onResourceEdit = (record) => {
         const { formRef } = this.state;
         formRef.current.setFieldsValue({ ...record });
-        this.setState({
-            editingKey: record.key
-        });
+        this.props.onResourceEdit(record.key);
+    }
+
+    updateResource = async (key) => {
+        const { onResourceUpdate } = this.props;
+        const { current: form } = this.state.formRef;
+        try {
+            const row = await form.validateFields();
+            onResourceUpdate({ key, value: row.value });
+        }
+        catch(error) {
+            console.log('Error', error);
+        }
+    };
+
+    isItemUpdating = () => {
+        return this.props.editingItem.updating;
     };
 
     isEditing = (key) => {
-        return this.state.editingKey === key;
+        return this.props.editingItem.key === key;
     };
 
-    updateResource = (record) => {
-        console.log('record', record);
-    };
+    isItemInvalid = () => {
+        return this.state.editingItemInvalid;
+    }
+
+    onFieldsChange = (changedFields, allFields) => {
+        const isEditingItemInvalid = allFields.some(f => f.errors.length > 0);
+        const currentItemState = this.state.isEditingItemInvalid;
+
+        if (isEditingItemInvalid != currentItemState) {
+            this.setState({
+                editingItemInvalid: isEditingItemInvalid
+            });
+        }
+    }
 
     render() {
-        const { items, loading, onSave } = this.props;
+        const { items, loading } = this.props;
         const { components, columnsConfig, state } = this;
-        const { editingKey, formRef } = state;
+        const { formRef } = state;
 
         const columns = columnsConfig.map((col) => {
-            if (!col.editable) {
-                return col;
+            if (col.editable) {
+                return {
+                    ...col,
+                    onCell: (record) => ({
+                        record,
+                        dataIndex: col.dataIndex,
+                        title: col.title,
+                        editing: this.isEditing(record.key)
+                    })
+                };
             }
 
-            return {
-                ...col,
-                onCell: (record) => ({
-                    record,
-                    dataIndex: col.dataIndex,
-                    title: col.title,
-                    editing: this.isEditing(record.key)
-                })
-            };
+            return col;
         });
 
         return (
-            <div className="resource-table">
-                <Form onFinish={this.updateResource} ref={formRef}>
+            <div className="resource-table" >
+                <Form ref={formRef} onFieldsChange={this.onFieldsChange}>
                     <Table
                         rowClassName="resource-table__row"
                         loading={loading}

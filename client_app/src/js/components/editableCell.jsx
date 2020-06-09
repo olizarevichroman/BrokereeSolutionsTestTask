@@ -1,10 +1,7 @@
 import React, { Component } from 'react';
-import FormContext from './formContext';
 import { Form, Input } from 'antd';
 
 export default class EditableCell extends Component {
-    static contextType = FormContext;
-
     constructor(props) {
         super(props);
 

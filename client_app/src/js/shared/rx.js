@@ -47,16 +47,23 @@ async function createResource({ resource, onSuccess, onError }) {
     }
 }
 
-async function updateResource({ resource, onSuccess, onError }) {
+async function updateResource({ key, value, onSuccess, onError }) {
     try {
-        if (!resource) {
-            throw new Error('Resource cannot be null');
+        if (!key) {
+            throw new Error('Key cannot be null');
         }
 
-        const response = await http.PUT(API_URLS.RESOURCES_URL).send(resource);
+        const response = await http.PUT(API_URLS.RESOURCES_URL).send({
+            key,
+            value
+        });
         if (response.ok && onSuccess instanceof Function) {
             const data = await response.json();
             onSuccess(data);
+            showSuccessNotification({
+                description: `Resource "${key}" has been successfully updated`,
+                title: 'Updated'
+            });
         }
         if (!response.ok && onError instanceof Function) {
             const errorMessage = await response.text();
@@ -77,7 +84,7 @@ async function deleteResource({ key, onSuccess, onError }) {
 
         const response = await http.DELETE(url).send();
         if (response.ok && onSuccess instanceof Function) {
-            onSuccess(key);
+            onSuccess({ key });
             showSuccessNotification({
                 description: `Resource "${key}" has been successfully deleted`,
                 title: 'Deleted'

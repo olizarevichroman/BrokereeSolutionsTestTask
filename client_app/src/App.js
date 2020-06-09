@@ -1,8 +1,7 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import './App.css';
-import AddItemForm from './js/components/addItemForm';
-import ItemsList from './js/components/itemsTable';
+import AddResourceForm from './js/components/addResourceForm';
+import ResourcesTable from './js/components/resourcesTable';
 import 'antd/dist/antd.css';
 import rx from './js/shared/rx';
 
@@ -14,14 +13,23 @@ export default class App extends React.Component {
             isLoading: true,
             isResourceAdding: false,
             resources: [],
-            formError: false
+            formError: false,
+            editingItemKey: false,
+            editingItemUpdating: false
         };
     }
 
-    deleteResource = (key) => {
+    componentDidMount() {
+        rx.getResources({
+            onSuccess: this.onResourcesFetched,
+            onError: this.onError
+        });
+    }
+
+    deleteResource = (resource) => {
         this.setState((prevState) => {
             const newResources = prevState.resources.filter(
-                (r) => r.key !== key
+                (r) => r.key !== resource.key
             );
 
             return {
@@ -30,23 +38,11 @@ export default class App extends React.Component {
         });
     };
 
-    onResourceDelete = (key) => {
+    onResourceDelete = ({ key }) => {
         rx.deleteResource({
             key,
-            onSuccess: this.deleteResource
-        });
-    };
-
-    onResourceCreated = (resource) => {
-        this.setState((prevState) => {
-            const newResources = prevState.resources.slice();
-            newResources.unshift(resource);
-
-            return {
-                resources: newResources,
-                isResourceAdding: false,
-                formError: false
-            };
+            onSuccess: this.deleteResource,
+            onError: this.onError
         });
     };
 
@@ -57,21 +53,28 @@ export default class App extends React.Component {
         });
     };
 
-    updateResource = (resource) => {
-        console.log('resource', resource);
-    }
-
-    createResource = (resource) => {
-        this.setState((prevState) => {
-            return {
-                isResourceAdding: true
-            };
+    onResourceCreate = (resource) => {
+        this.setState({
+            isResourceAdding: true
         });
 
         rx.createResource({
             resource,
-            onSuccess: this.onResourceCreated,
+            onSuccess: this.createResource,
             onError: this.onError
+        });
+    };
+
+    createResource = (resource) => {
+        this.setState((prevState) => {
+            const newResources = prevState.resources.slice();
+            newResources.unshift(resource);
+
+            return {
+                resources: newResources,
+                isResourceAdding: false,
+                formError: false
+            };
         });
     };
 
@@ -88,34 +91,67 @@ export default class App extends React.Component {
         });
     };
 
-    componentDidMount() {
-        rx.getResources({
-            onSuccess: this.onResourcesFetched,
+    onResourceUpdate = (resource) => {
+        this.setState({
+            editingItemUpdating: true
+        });
+        rx.updateResource({
+            key: resource.key,
+            value: resource.value,
+            onSuccess: this.updateResource,
             onError: this.onError
         });
+    };
+
+    updateResource = (resource) => {
+        const newResources = this.state.resources.slice();
+        const index = newResources.findIndex(r => r.key === resource.key);
+        if (index != -1) {
+            newResources.splice(index, 1, resource);
+        }
+
+        this.setState({
+            resources: newResources,
+            editingItemUpdating: false,
+            editingItemKey: false
+        });
     }
+
+    onResourceEdit = (key) => {
+        this.setState({
+            editingItemUpdating: false,
+            editingItemKey: key
+        });
+    };
 
     render() {
         const {
             resources,
             isResourceAdding,
             isLoading,
-            formError
+            formError,
+            editingItemKey,
+            editingItemUpdating
         } = this.state;
 
         return (
             <div className="app">
-                <AddItemForm
+                <AddResourceForm
                     onErrorClosed={this.onErrorClosed}
                     errorMessage={formError}
-                    onValidSubmit={this.createResource}
+                    onValidSubmit={this.onResourceCreate}
                     isLoading={isResourceAdding}
                 />
-                <ItemsList
+                <ResourcesTable
                     items={resources}
                     loading={isLoading}
                     onResourceDelete={this.onResourceDelete}
-                    onSave={this.updateResource}
+                    onResourceUpdate={this.onResourceUpdate}
+                    onResourceEdit={this.onResourceEdit}
+                    editingItem={{
+                        key: editingItemKey,
+                        updating: editingItemUpdating
+                    }}
                 />
             </div>
         );
