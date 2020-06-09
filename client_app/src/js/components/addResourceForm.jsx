@@ -8,7 +8,7 @@ export default class AddResourceForm extends React.Component {
         onErrorClosed: PropTypes.func.isRequired,
         isLoading: PropTypes.bool,
         errorMessage: PropTypes.node
-    }
+    };
     constructor(props) {
         super(props);
 
@@ -18,13 +18,15 @@ export default class AddResourceForm extends React.Component {
     }
 
     onFieldsChanged = (changedFields, allFields) => {
-        const isSubmitDisabled = allFields.some(f => !f.touched || f.errors.length > 0);
+        const isSubmitDisabled = allFields.some(
+            (f) => !f.touched || f.errors.length > 0
+        );
 
         if (this.state.isSubmitDisabled !== isSubmitDisabled) {
             this.setState({
                 isSubmitDisabled
             });
-        };
+        }
     };
 
     render() {
@@ -43,36 +45,42 @@ export default class AddResourceForm extends React.Component {
                     className="resource-form__space"
                     size="middle"
                 >
-                    {errorMessage && (
-                        <Alert
-                            message="Error"
-                            description={errorMessage}
-                            type="error"
-                            onClose={onErrorClosed}
-                            showIcon
-                            closable
-                        />
-                    )}
                     <Form
                         onFinish={onValidSubmit}
                         onFieldsChange={this.onFieldsChanged}
                     >
-                        <Form.Item
-                            name="key"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Please input resource key'
-                                }
-                            ]}
-                            hasFeedback
+                        <Space
+                            direction="vertical"
+                            className="resource-form__space"
+                            size="middle"
                         >
-                            <Input
-                                placeholder="Resource Key"
-                                id="resourceKey"
-                                disabled={isLoading}
-                            />
-                        </Form.Item>
+                            {errorMessage && (
+                                <Alert
+                                    message="Error"
+                                    description={errorMessage}
+                                    type="error"
+                                    onClose={onErrorClosed}
+                                    showIcon
+                                    closable
+                                />
+                            )}
+                            <Form.Item
+                                name="key"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Please input resource key'
+                                    }
+                                ]}
+                                hasFeedback
+                            >
+                                <Input
+                                    placeholder="Resource Key"
+                                    id="resourceKey"
+                                    disabled={isLoading}
+                                />
+                            </Form.Item>
+                        </Space>
                         <Form.Item
                             name="value"
                             rules={[
